@@ -1,5 +1,5 @@
 ﻿using Entities;
-using RepositoryContracts;
+using RepositoryContacts;
 
 namespace InMemoryRepositories;
 

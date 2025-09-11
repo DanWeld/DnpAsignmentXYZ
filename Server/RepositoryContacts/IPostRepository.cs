@@ -1,6 +1,6 @@
 ﻿using Entities;
 
-namespace RepositoryContracts;
+namespace RepositoryContacts;
 
 public interface IPostRepository
 {
