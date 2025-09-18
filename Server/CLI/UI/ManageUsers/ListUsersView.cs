@@ -3,15 +3,13 @@
 public class ListUsersView
 {
 
-    public void Render()
+    public void DisplayUsers(List<Entities.User> users)
     {
-        Console.Clear();
-        Console.WriteLine("...");
-        Console.WriteLine("1. User1");
-        Console.WriteLine("2. User2");
-        Console.WriteLine("3. User3");
-        Console.WriteLine("...");
-        Console.WriteLine("Press any key ...");
-        Console.ReadKey();
+        Console.WriteLine("List of Users:");
+        foreach (var user in users)
+        {
+            Console.WriteLine($"ID: {user.Id}, Username: {user.Username}, Password: {user.Password}");
+        }
+        
     }
 }
