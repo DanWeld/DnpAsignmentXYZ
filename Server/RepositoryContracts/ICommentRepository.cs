@@ -1,6 +1,6 @@
 ﻿using Entities;
 
-namespace RepositoryContacts;
+namespace RepositoryContracts;
 
 public interface ICommentRepository
 {

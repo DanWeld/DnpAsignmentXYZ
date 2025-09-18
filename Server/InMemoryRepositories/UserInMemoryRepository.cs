@@ -1,5 +1,5 @@
 ﻿using Entities;
-using RepositoryContacts;
+using RepositoryContracts;
 
 namespace InMemoryRepositories;
 
@@ -53,5 +53,11 @@ public class UserInMemoryRepository : IUserRepository
     public IQueryable<User> GetMany()
     {
         return users.AsQueryable();
+    }
+
+    public Task<User?> GetByUsernameAsync(string empty)
+    {
+        
+                throw new NotImplementedException();
     }
 }

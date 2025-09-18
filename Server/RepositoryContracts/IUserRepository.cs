@@ -1,6 +1,6 @@
 ﻿using Entities;
 
-namespace RepositoryContacts;
+namespace RepositoryContracts;
 
 public interface IUserRepository
 {
@@ -9,5 +9,6 @@ public interface IUserRepository
     Task DeleteAsync(int id);
     Task<User> GetSingleAsync(int id);
     IQueryable<User> GetMany();
-    
+
+    Task<User?> GetByUsernameAsync(string empty);
 }
