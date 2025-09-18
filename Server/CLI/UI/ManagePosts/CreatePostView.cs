@@ -40,8 +40,8 @@ public class CreatePostView
 
     public async Task ShowAsync()
     {
+        await DisplayAsync();
         
-            throw new NotImplementedException();
     }
 }
 

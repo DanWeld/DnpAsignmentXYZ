@@ -57,7 +57,8 @@ public class UserInMemoryRepository : IUserRepository
 
     public Task<User?> GetByUsernameAsync(string empty)
     {
+        var user = users.SingleOrDefault(u => u.Username == empty);
+        return Task.FromResult(user);
         
-                throw new NotImplementedException();
     }
 }
