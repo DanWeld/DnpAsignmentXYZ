@@ -1,4 +1,4 @@
-﻿namespace CLI.UI.ManageMainView;
+﻿﻿namespace CLI.UI.ManageMainView;
 
 using RepositoryContracts;
 using Entities;

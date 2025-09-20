@@ -11,7 +11,10 @@ public class ListPostsView
             Console.WriteLine($"ID: {post.Id}, Title: {post.Title}, Body: {post.Body}, UserId: {post.UserId}");
         }
         
+        
+        
     }
+    
     
 
 }

@@ -1,5 +1,4 @@
-﻿
-using CLI.UI;
+﻿using CLI.UI;
 using InMemoryRepositories;
 using RepositoryContracts;
 

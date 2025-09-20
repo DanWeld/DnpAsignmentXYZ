@@ -11,4 +11,7 @@ public interface IUserRepository
     IQueryable<User> GetMany();
 
     Task<User?> GetByUsernameAsync(string empty);
+
+    Task<object> GetAllAsync();
+    
 }

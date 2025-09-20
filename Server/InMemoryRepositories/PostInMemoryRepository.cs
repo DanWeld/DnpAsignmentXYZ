@@ -7,6 +7,19 @@ public class PostInMemoryRepository : IPostRepository
 {
     private readonly List<Post> posts = new();
 
+    public PostInMemoryRepository()
+    {
+        if (!posts.Any())
+        {
+            posts.AddRange(new[]
+            {
+                new Post { Id = 1, Title = "Hello World", Body = "First post body", UserId = 1 },
+                new Post { Id = 2, Title = "Second Post", Body = "More content here", UserId = 2 },
+                new Post { Id = 3, Title = "Random Thoughts", Body = "Some random text", UserId = 1 }
+            });
+        }
+    }
+
     public Task<Post> AddAsync(Post post)
     {
         post.Id = posts.Any() ? posts.Max(p => p.Id) + 1 : 1;

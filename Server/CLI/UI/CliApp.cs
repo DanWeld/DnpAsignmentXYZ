@@ -1,76 +1,101 @@
 ﻿using Entities;
-using InMemoryRepositories;
 using RepositoryContracts;
-namespace CLI.UI;
-
-public class CliApp
+namespace CLI.UI
 {
-    private readonly IUserRepository _userRepository;
-    private readonly ICommentRepository _commentRepository;
-    private readonly IPostRepository _postRepository;
-
-    public CliApp(IUserRepository userRepository, ICommentRepository commentRepository, IPostRepository postRepository)
+    public class CliApp
     {
-        _userRepository = userRepository;
-        _commentRepository = commentRepository;
-        _postRepository = postRepository;
-    }
+        private readonly IUserRepository _userRepository;
+        private readonly ICommentRepository _commentRepository;
+        private readonly IPostRepository _postRepository;
 
-    public async Task StartAsync()
-    {
-        Console.WriteLine("Welcome to the CLI App!");
-        User? loggedInUser = null;
-
-        while (true)
+        public CliApp(IUserRepository userRepository, ICommentRepository commentRepository, IPostRepository postRepository)
         {
-            if (loggedInUser == null)
-            {
-                Console.WriteLine("1. Login");
-                Console.WriteLine("2. Create User");
-                Console.WriteLine("3. Exit");
-                Console.Write("Choose an option: ");
-                var choice = Console.ReadLine();
+            _userRepository = userRepository;
+            _commentRepository = commentRepository;
+            _postRepository = postRepository;
+        }
 
-                switch (choice)
+        public async Task StartAsync()
+        {
+            Console.WriteLine("Welcome to the CLI App!");
+            User? loggedInUser = null;
+
+            while (true)
+            {
+                if (loggedInUser == null)
                 {
-                    case "1":
-                        var loginView = new ManageUsers.LoginUserView(_userRepository);
-                        loggedInUser = await loginView.ShowAsync();
-                        break;
-                    case "2":
-                        var createUserView = new ManageUsers.CreateUserView(_userRepository);
-                        await createUserView.ShowAsync();
-                        break;
-                    case "3":
-                        return;
-                    default:
-                        Console.WriteLine("Invalid choice. Try again.");
-                        break;
+                    Console.WriteLine("1. Login");
+                    Console.WriteLine("2. Create User");
+                    Console.WriteLine("3. Exit");
+                    Console.Write("Choose an option: ");
+                    var choice = Console.ReadLine();
+
+                    switch (choice)
+                    {
+                        case "1":
+                            var loginView = new ManageUsers.LoginUserView(_userRepository);
+                            loggedInUser = await loginView.ShowAsync();
+                            break;
+                        case "2":
+                            var createUserView = new ManageUsers.CreateUserView(_userRepository);
+                            await createUserView.ShowAsync();
+                            break;
+                        case "3":
+                            return;
+                        default:
+                            Console.WriteLine("Invalid choice. Try again.");
+                            break;
+                    }
                 }
-            }
-            else
-            {
-                Console.WriteLine($"Welcome, {loggedInUser.Username}!");
-                Console.WriteLine("1. Create Post");
-                Console.WriteLine("2. Logout");
-                Console.Write("Choose an option: ");
-                var choice = Console.ReadLine();
-
-                switch (choice)
+                else
                 {
-                    case "1":
-                        var createPostView = new ManagePosts.CreatePostView(_postRepository, loggedInUser);
-                        await createPostView.ShowAsync();
-                        break;
-                    case "2":
-                        loggedInUser = null;
-                        break;
-                    default:
-                        Console.WriteLine("Invalid choice. Try again.");
-                        break;
+                    Console.WriteLine($"Welcome, {loggedInUser.Username}!");
+                    Console.WriteLine("1. Create Post");
+                    Console.WriteLine("2. Logout");
+                    Console.Write("Choose an option: ");
+                    var choice = Console.ReadLine();
+
+                    switch (choice)
+                    {
+                        case "1":
+                            var createPostView = new ManagePosts.CreatePostView(_postRepository, loggedInUser);
+                            await createPostView.ShowAsync();
+                            break;
+                        case "2":
+                            loggedInUser = null;
+                            break;
+                        default:
+                            Console.WriteLine("Invalid choice. Try again.");
+                            break;
+                    }
                 }
             }
         }
     }
 }
 
+namespace CLI.UI.ManageUsers
+{
+    public class LoginUserView
+    {
+        private readonly IUserRepository userRepository;
+        public LoginUserView(IUserRepository userRepository) { this.userRepository = userRepository; }
+
+        public async Task<User?> ShowAsync()
+        {
+            Console.Write("Enter username: ");
+            var username = Console.ReadLine();
+            Console.Write("Enter password: ");
+            var password = Console.ReadLine();
+            var user = userRepository.GetMany().FirstOrDefault(u => u.Username == username && u.Password == password);
+            await Task.CompletedTask;
+            if (user == null)
+            {
+                Console.WriteLine("Invalid username or password.");
+                return null;
+            }
+            Console.WriteLine("Login successful!");
+            return user;
+        }
+    }
+}

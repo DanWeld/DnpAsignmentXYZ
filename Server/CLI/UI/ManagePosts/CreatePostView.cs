@@ -5,7 +5,7 @@ namespace CLI.UI.ManagePosts;
 
 public class CreatePostView
 {
- private readonly IPostRepository postRepository;
+    private readonly IPostRepository postRepository;
     public CreatePostView(IPostRepository postRepository, User loggedInUser)
     {
         this.postRepository = postRepository;
@@ -44,4 +44,3 @@ public class CreatePostView
         
     }
 }
-
