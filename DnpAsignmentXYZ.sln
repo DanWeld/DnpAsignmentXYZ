@@ -10,6 +10,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InMemoryRepositories", "Ser
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLI", "Server\CLI\CLI.csproj", "{14162F37-6215-4DED-86B2-D5235A548378}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileRepositories", "Server\FileRepositories\FileRepositories.csproj", "{90259460-1FFE-47BB-95D1-DEBBF7DC3559}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,5 +40,9 @@ Global
 		{14162F37-6215-4DED-86B2-D5235A548378}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14162F37-6215-4DED-86B2-D5235A548378}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14162F37-6215-4DED-86B2-D5235A548378}.Release|Any CPU.Build.0 = Release|Any CPU
+		{90259460-1FFE-47BB-95D1-DEBBF7DC3559}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90259460-1FFE-47BB-95D1-DEBBF7DC3559}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90259460-1FFE-47BB-95D1-DEBBF7DC3559}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90259460-1FFE-47BB-95D1-DEBBF7DC3559}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
