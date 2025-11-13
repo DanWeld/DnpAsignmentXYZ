@@ -2,6 +2,32 @@
 ### Base URL: https://localhost:7005
 
 ###############################################
+# AUTHENTICATION ENDPOINTS
+###############################################
+
+### Login with valid credentials (create a user first)
+POST https://localhost:7005/auth/login
+Content-Type: application/json
+
+{
+  "username": "dani",
+  "password": "d123"
+}
+
+### Login with invalid credentials (should fail - user doesn't exist)
+POST https://localhost:7005/auth/login
+Content-Type: application/json
+
+{
+  "username": "dani2",
+  "password": "d123"
+}
+
+### Note: The second test SHOULD return 401 Unauthorized because 'dani2' doesn't exist.
+### This is the expected behavior to demonstrate authentication is working correctly.
+
+
+###############################################
 # USERS ENDPOINTS
 ###############################################
 

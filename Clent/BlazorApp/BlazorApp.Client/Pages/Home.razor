@@ -1,9 +1,25 @@
 @page "/"
+@inject NavigationManager NavMgr
 
 <PageTitle>Forum Home</PageTitle>
 
 <div class="container mt-4">
     <h1>Welcome to the Forum</h1>
+    
+    <AuthorizeView>
+        <Authorized>
+            <div class="alert alert-success">
+                <h4>Hello, @context.User.Identity!.Name!</h4>
+                <p>You are logged in.</p>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <div class="alert alert-warning">
+                <p>You are not logged in. Please <a href="/login">log in</a> to access all features.</p>
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
+    
     <div class="row mt-4">
         
         <div class="col-md-4">

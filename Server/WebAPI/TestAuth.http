@@ -1,0 +1,35 @@
+### Test Auth Login Endpoint
+
+# Test successful login
+POST https://localhost:7005/api/auth/login
+Content-Type: application/json
+
+{
+  "userName": "admin",
+  "password": "password"
+}
+
+###
+
+# Test with wrong password
+POST https://localhost:7005/api/auth/login
+Content-Type: application/json
+
+{
+  "userName": "admin",
+  "password": "wrongpassword"
+}
+
+###
+
+# Test with non-existent user
+POST https://localhost:7005/api/auth/login
+Content-Type: application/json
+
+{
+  "userName": "nonexistent",
+  "password": "password"
+}
+
+###
+

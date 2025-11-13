@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using BlazorApp.Client.Services;
+using Microsoft.AspNetCore.Components.Authorization;
+using BlazorApp.Client.Auth;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
@@ -19,5 +21,17 @@ builder.Services.AddScoped(sp =>
 builder.Services.AddScoped<IUserService, HttpUserService>();
 builder.Services.AddScoped<IPostService, HttpPostService>();
 builder.Services.AddScoped<ICommentService, HttpCommentService>();
+
+// Register authentication
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, SimpleAuthProvider>();
+
+await builder.Build().RunAsync();
+builder.Services.AddScoped<IPostService, HttpPostService>();
+builder.Services.AddScoped<ICommentService, HttpCommentService>();
+
+// Register authentication
+builder.Services.AddAuthorizationCore();
+builder.Services.AddScoped<AuthenticationStateProvider, SimpleAuthProvider>();
 
 await builder.Build().RunAsync();

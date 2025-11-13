@@ -1,9 +1,15 @@
 using FileRepositories;
 using RepositoryContracts;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Add controllers
 builder.Services.AddControllers();
+
+// Add authorization services (for AuthController)
+builder.Services.AddAuthorization();
+
 // Add services to the container.
-// Learn more about configuring Swagger/Open API at https://aka.ms/aspnet
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
