@@ -8,11 +8,26 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// Add CORS policy
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazorApp", policy =>
+    {
+        policy.AllowAnyOrigin()
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddScoped<IPostRepository, PostFileRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentFileRepository>();
 builder.Services.AddScoped<IUserRepository, UserFileRepository>();
 
 var app = builder.Build();
+
+// Use CORS
+app.UseCors("AllowBlazorApp");
+
 app.MapControllers();
 
 // Configure the HTTP request pipeline.

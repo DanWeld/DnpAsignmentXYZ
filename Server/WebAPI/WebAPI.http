@@ -1,6 +1,203 @@
-@WebAPI_HostAddress = http://localhost:5182
+### Forum API - HTTP Request 
+### Base URL: https://localhost:7005
 
-GET {{WebAPI_HostAddress}}/weatherforecast/
-Accept: application/json
+###############################################
+# USERS ENDPOINTS
+###############################################
 
-###
+### Create a new user
+POST https://localhost:7005/Users
+Content-Type: application/json
+
+{
+  "username": "dw",
+  "password": "d123",
+  "name": "DW"
+}
+
+### Get all users
+GET https://localhost:7005/Users
+
+### Get users filtered by username
+GET https://localhost:7005/Users?usernameContains=test
+
+### Get single user by ID
+GET https://localhost:7005/Users/1
+
+### Update user
+PUT https://localhost:7005/Users/1
+Content-Type: application/json
+
+{
+  "name": "Updated Name"
+}
+
+### Delete user
+DELETE https://localhost:7005/Users/1
+
+
+###############################################
+# POSTS ENDPOINTS
+###############################################
+
+### Create a new post
+POST https://localhost:7005/Posts
+Content-Type: application/json
+
+{
+  "title": "My First Post",
+  "body": "This is the content of my first post!",
+  "userId": 1
+}
+
+### Get all posts
+GET https://localhost:7005/Posts
+
+### Get posts with filters (title, author, includes)
+GET https://localhost:7005/Posts?titleContains=First&includeAuthor=true&includeComments=true
+
+### Get posts by specific user
+GET https://localhost:7005/Posts?userId=1&includeAuthor=true
+
+### Get posts by author name
+GET https://localhost:7005/Posts?authorNameContains=Test&includeAuthor=true
+
+### Get single post by ID
+GET https://localhost:7005/Posts/1
+
+### Get single post with author and comments
+GET https://localhost:7005/Posts/1?includeAuthor=true&includeComments=true
+
+### Update post
+PUT https://localhost:7005/Posts/1
+Content-Type: application/json
+
+{
+  "title": "Updated Title",
+  "body": "Updated content"
+}
+
+### Delete post
+DELETE https://localhost:7005/Posts/1
+
+
+###############################################
+# COMMENTS ENDPOINTS
+###############################################
+
+### Create a comment (standalone)
+POST https://localhost:7005/Comments
+Content-Type: application/json
+
+{
+  "body": "Great post!",
+  "userId": 1,
+  "postId": 1
+}
+
+### Create a comment for a specific post (nested route)
+POST https://localhost:7005/Posts/1/comments
+Content-Type: application/json
+
+{
+  "body": "bla bla bla!",
+  "userId": 1
+}
+
+### Get all comments
+GET https://localhost:7005/Comments
+
+### Get comments filtered by post
+GET https://localhost:7005/Comments?postId=1
+
+### Get comments filtered by user
+GET https://localhost:7005/Comments?userId=1
+
+### Get comments filtered by username
+GET https://localhost:7005/Comments?usernameContains=test
+
+### Get comments for a specific post (nested route)
+GET https://localhost:7005/Posts/1/comments
+
+### Get single comment by ID
+GET https://localhost:7005/Comments/1
+
+### Update comment
+PUT https://localhost:7005/Comments/1
+Content-Type: application/json
+
+{
+  "body": "Updated comment text"
+}
+
+### Delete comment
+DELETE https://localhost:7005/Comments/1
+
+
+###############################################
+# COMPLETE WORKFLOW EXAMPLE
+###############################################
+
+### 1. Create a user
+POST https://localhost:7005/Users
+Content-Type: application/json
+
+{
+  "username": "dw",
+  "password": "d123",
+  "name": "dani"
+}
+
+### 2. Create another user
+POST https://localhost:7005/Users
+Content-Type: application/json
+
+{
+  "username": "jh",
+  "password": "j",
+  "name": "Jwan"
+}
+
+### 3. Create a post by user 1
+POST https://localhost:7005/Posts
+Content-Type: application/json
+
+{
+  "title": "Welcome!",
+  "body": "first post bla bla",
+  "userId": 1
+}
+
+### 4. Create another post by user 2
+POST https://localhost:7005/Posts
+Content-Type: application/json
+
+{
+  "title": "Intro",
+  "body": "Hej!",
+  "userId": 2
+}
+
+### 5. Add comment to post 1 by user 2
+POST https://localhost:7005/Posts/1/comments
+Content-Type: application/json
+
+{
+  "body": "tak!",
+  "userId": 2
+}
+
+### 6. Add another comment to post 1 by user 1
+POST https://localhost:7005/Posts/1/comments
+Content-Type: application/json
+
+{
+  "body": "velkommen!",
+  "userId": 1
+}
+
+### 7. Get all posts with author and comments
+GET https://localhost:7005/Posts?includeAuthor=true&includeComments=true
+
+### 8. Get specific post with all details
+GET https://localhost:7005/Posts/1?includeAuthor=true&includeComments=true
