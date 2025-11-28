@@ -55,7 +55,7 @@ public class PostFileRepository : IPostRepository
         await SaveAsync(posts);
     }
 
-    public async Task<Post> GetSingleAsync(int id)
+    public async Task<Post?> GetSingleAsync(int id)
     {
         var posts = await LoadAsync();
         return posts.FirstOrDefault(p => p.Id == id);

@@ -1,4 +1,7 @@
-using FileRepositories;
+// Add a type alias to disambiguate System.AppContext vs EfcRepositories.AppContext
+using AppContext = EfcRepositories.AppContext;
+using EfcRepositories;
+using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,16 +28,34 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddScoped<IPostRepository, PostFileRepository>();
-builder.Services.AddScoped<ICommentRepository, CommentFileRepository>();
-builder.Services.AddScoped<IUserRepository, UserFileRepository>();
+// Register DbContext
+builder.Services.AddDbContext<AppContext>(options =>
+    options.UseSqlite("Data Source=app.db"));
+
+// Register repositories
+builder.Services.AddScoped<IPostRepository, EfcPostRepository>();
+builder.Services.AddScoped<ICommentRepository, EfcCommentRepository>();
+builder.Services.AddScoped<IUserRepository, EfcUserRepository>();
 
 var app = builder.Build();
 
+// Ensure database is created (use EnsureCreated when migrations are not present)
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppContext>();
+    try
+    {
+        // Apply migrations if present (preferred when migrations exist)
+        dbContext.Database.Migrate();
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine("Failed to create or migrate database: " + ex);
+    }
+}
+
 // Use CORS
 app.UseCors("AllowBlazorApp");
-
-app.MapControllers();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -44,6 +65,10 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Ensure authorization middleware is registered (requires AddAuthorization above)
+app.UseAuthorization();
+
+app.MapControllers();
+
 app.Run();
-
-

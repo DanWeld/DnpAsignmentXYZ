@@ -2,6 +2,7 @@
 using ApiContracts.Users;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 
 namespace WebAPI.Controllers;
@@ -71,9 +72,9 @@ public class UsersController : ControllerBase
 
     // Get many with filters
     [HttpGet]
-    public ActionResult<IEnumerable<UserDto>> GetMany([FromQuery] GetUsersQuery query)
+    public async Task<ActionResult<IEnumerable<UserDto>>> GetMany([FromQuery] GetUsersQuery query)
     {
-        var q = _users.GetMany().AsEnumerable();
+        var q = _users.GetMany().AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(query.UsernameContains))
             q = q.Where(u => (u.Username ?? string.Empty).IndexOf(query.UsernameContains, StringComparison.OrdinalIgnoreCase) >= 0);
@@ -84,7 +85,7 @@ public class UsersController : ControllerBase
         if (query.Skip is > 0) q = q.Skip(query.Skip.Value);
         if (query.Take is > 0) q = q.Take(query.Take.Value);
 
-        var list = q.Select(ToDto).ToList();
+        var list = await q.Select(u => ToDto(u)).ToListAsync();
         return Ok(list);
     }
 

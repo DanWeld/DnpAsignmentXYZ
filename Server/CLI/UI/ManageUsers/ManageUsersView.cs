@@ -14,5 +14,4 @@ public class ManageUsersView
         Console.Write("Select an option: ");
     }
     
-
 }

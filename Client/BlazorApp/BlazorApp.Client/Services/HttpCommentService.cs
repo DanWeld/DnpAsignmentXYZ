@@ -3,7 +3,7 @@ using System.Text.Json;
 using ApiContracts.Comments;
 
 namespace BlazorApp.Client.Services;
-
+// the following whole code is about comments service which interacts with the API to perform CRUD operations on comments.
 public class HttpCommentService : ICommentService
 {
     private readonly HttpClient _client;

@@ -2,6 +2,7 @@
 using ApiContracts.Posts;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 
 namespace WebAPI.Controllers;
@@ -57,18 +58,56 @@ public class PostsController : ControllerBase
 
     // Get single with optional includes
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<PostDto>> GetSingle([FromRoute] int id, [FromQuery] bool includeComments = false, [FromQuery] bool includeAuthor = false)
+    public async Task<IResult> GetSingle(
+        [FromRoute] int id,
+        [FromQuery] bool includeAuthor,
+        [FromQuery] bool includeComments)
     {
-        var post = await _posts.GetSingleAsync(id);
-        if (post == null) return NotFound();
-        return Ok(await ToDtoAsync(post, includeAuthor, includeComments));
+        IQueryable<Post> queryForPost = _posts
+            .GetMany()
+            .Where(p => p.Id == id)
+            .AsQueryable();
+
+        if (includeAuthor)
+        {
+            queryForPost = queryForPost.Include(p => p.User);
+        }
+
+        if (includeComments)
+        {
+            queryForPost = queryForPost.Include(p => p.Comments);
+        }
+
+        PostDto? dto = await queryForPost.Select(post => new PostDto()
+            {
+                Id = post.Id,
+                Title = post.Title,
+                Body = post.Body,
+                UserId = post.UserId,
+                AuthorUsername = includeAuthor && post.User != null
+                    ? post.User.Username
+                    : null,
+                Comments = includeComments
+                    ? post.Comments.Select(c => new CommentDto
+                    {
+                        Id = c.Id,
+                        Body = c.Body,
+                        PostId = c.PostId,
+                        UserId = c.UserId,
+                        Username = null // Will need to be loaded separately if needed
+                    }).ToList()
+                    : new List<CommentDto>()
+            })
+            .FirstOrDefaultAsync();
+
+        return dto == null ? Results.NotFound() : Results.Ok(dto);
     }
 
     // Get many with filters and optional includes
     [HttpGet]
     public async Task<ActionResult<IEnumerable<PostDto>>> GetMany([FromQuery] GetPostsQuery query)
     {
-        var q = _posts.GetMany().AsEnumerable();
+        var q = _posts.GetMany().AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(query.TitleContains))
         {
@@ -82,18 +121,19 @@ public class PostsController : ControllerBase
         if (!string.IsNullOrWhiteSpace(query.AuthorNameContains))
         {
             var needle = query.AuthorNameContains.ToUpperInvariant();
-            var allowedUserIds = _users.GetMany().AsEnumerable()
+            var allowedUserIds = await _users.GetMany()
                 .Where(u => ((u.Name ?? u.Username) ?? string.Empty).ToUpperInvariant().Contains(needle))
                 .Select(u => u.Id)
-                .ToHashSet();
-            q = q.Where(p => allowedUserIds.Contains(p.UserId));
+                .ToListAsync();
+            var allowedUserIdsSet = allowedUserIds.ToHashSet();
+            q = q.Where(p => allowedUserIdsSet.Contains(p.UserId));
         }
 
         if (query.Skip is > 0) q = q.Skip(query.Skip.Value);
         if (query.Take is > 0) q = q.Take(query.Take.Value);
 
         // materialize
-        var posts = q.ToList();
+        var posts = await q.ToListAsync();
         var result = new List<PostDto>(posts.Count);
         foreach (var p in posts)
         {
@@ -114,14 +154,14 @@ public class PostsController : ControllerBase
 
     // Nested: GET /posts/{postId}/comments
     [HttpGet("{postId:int}/comments")]
-    public ActionResult<IEnumerable<CommentDto>> GetCommentsForPost([FromRoute] int postId, [FromQuery] int? userId = null, [FromQuery] string? usernameContains = null)
+    public async Task<ActionResult<IEnumerable<CommentDto>>> GetCommentsForPost([FromRoute] int postId, [FromQuery] int? userId = null, [FromQuery] string? usernameContains = null)
     {
         var comments = _comments.GetMany().Where(c => c.PostId == postId);
         if (userId.HasValue) comments = comments.Where(c => c.UserId == userId.Value);
-        var list = comments.ToList();
+        var list = await comments.ToListAsync();
 
         // username filter and projection
-        var users = _users.GetMany().ToDictionary(u => u.Id, u => u.Username);
+        var users = await _users.GetMany().ToDictionaryAsync(u => u.Id, u => u.Username);
         if (!string.IsNullOrWhiteSpace(usernameContains))
         {
             var needle = usernameContains.ToUpperInvariant();
@@ -178,8 +218,8 @@ public class PostsController : ControllerBase
 
         if (includeComments)
         {
-            var list = _comments.GetMany().Where(c => c.PostId == post.Id).ToList();
-            var userLookup = _users.GetMany().ToDictionary(u => u.Id, u => u.Username);
+            var list = await _comments.GetMany().Where(c => c.PostId == post.Id).ToListAsync();
+            var userLookup = await _users.GetMany().ToDictionaryAsync(u => u.Id, u => u.Username);
             commentDtos = list.Select(c => new CommentDto
             {
                 Id = c.Id,

@@ -52,13 +52,9 @@ public class PostInMemoryRepository : IPostRepository
         return Task.CompletedTask;
     }
 
-    public Task<Post> GetSingleAsync(int id)
+    public Task<Post?> GetSingleAsync(int id)
     {
         var post = posts.SingleOrDefault(p => p.Id == id);
-        if (post == null)
-        {
-            throw new InvalidOperationException($"Post with ID '{id}' not found");
-        }
 
         return Task.FromResult(post);
     }

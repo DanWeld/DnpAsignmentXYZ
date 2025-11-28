@@ -55,7 +55,7 @@ public class CommentFileRepository : ICommentRepository
         await SaveAsync(comments);
     }
 
-    public async Task<Comment> GetSingleAsync(int id)
+    public async Task<Comment?> GetSingleAsync(int id)
     {
         var comments = await LoadAsync();
         return comments.FirstOrDefault(c => c.Id == id);

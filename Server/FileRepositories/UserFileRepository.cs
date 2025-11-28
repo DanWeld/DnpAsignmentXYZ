@@ -55,7 +55,7 @@ public class UserFileRepository : IUserRepository
         await SaveAsync(users);
     }
 
-    public async Task<User> GetSingleAsync(int id)
+    public async Task<User?> GetSingleAsync(int id)
     {
         var users = await LoadAsync();
         return users.FirstOrDefault(u => u.Id == id);

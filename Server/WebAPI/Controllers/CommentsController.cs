@@ -1,6 +1,7 @@
 ﻿using ApiContracts.Comments;
 using Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RepositoryContracts;
 
 namespace WebAPI.Controllers;
@@ -46,8 +47,8 @@ public class CommentsController : ControllerBase
         if (!string.IsNullOrWhiteSpace(request.Body)) existing.Body = request.Body!;
         await _comments.UpdateAsync(existing);
 
-        var username = _users.GetMany().FirstOrDefault(u => u.Id == existing.UserId)?.Username;
-        return Ok(ToDto(existing, username));
+        var user = await _users.GetMany().FirstOrDefaultAsync(u => u.Id == existing.UserId);
+        return Ok(ToDto(existing, user?.Username));
     }
 
     // Get single
@@ -56,19 +57,19 @@ public class CommentsController : ControllerBase
     {
         var c = await _comments.GetSingleAsync(id);
         if (c == null) return NotFound();
-        var username = _users.GetMany().FirstOrDefault(u => u.Id == c.UserId)?.Username;
-        return Ok(ToDto(c, username));
+        var user = await _users.GetMany().FirstOrDefaultAsync(u => u.Id == c.UserId);
+        return Ok(ToDto(c, user?.Username));
     }
 
     // Get many with filters
     [HttpGet]
-    public ActionResult<IEnumerable<CommentDto>> GetMany([FromQuery] GetCommentsQuery query)
+    public async Task<ActionResult<IEnumerable<CommentDto>>> GetMany([FromQuery] GetCommentsQuery query)
     {
-        var q = _comments.GetMany().AsEnumerable();
+        var q = _comments.GetMany().AsQueryable();
         if (query.PostId.HasValue) q = q.Where(c => c.PostId == query.PostId.Value);
         if (query.UserId.HasValue) q = q.Where(c => c.UserId == query.UserId.Value);
 
-        var users = _users.GetMany().ToDictionary(u => u.Id, u => u.Username);
+        var users = await _users.GetMany().ToDictionaryAsync(u => u.Id, u => u.Username);
 
         if (!string.IsNullOrWhiteSpace(query.UsernameContains))
         {
@@ -81,7 +82,7 @@ public class CommentsController : ControllerBase
         if (query.Skip is > 0) q = q.Skip(query.Skip.Value);
         if (query.Take is > 0) q = q.Take(query.Take.Value);
 
-        var list = q.ToList();
+        var list = await q.ToListAsync();
         var dtos = list.Select(c => ToDto(c, users.GetValueOrDefault(c.UserId))).ToList();
         return Ok(dtos);
     }

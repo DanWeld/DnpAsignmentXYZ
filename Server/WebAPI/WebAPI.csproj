@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
@@ -12,7 +12,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\Shared\ApiContracts\ApiContracts.csproj" />
-      <ProjectReference Include="..\FileRepositories\FileRepositories.csproj" />
+      <ProjectReference Include="..\EfcRepositories\EfcRepositories.csproj" />
       <ProjectReference Include="..\RepositoryContracts\RepositoryContracts.csproj" />
     </ItemGroup>
 
